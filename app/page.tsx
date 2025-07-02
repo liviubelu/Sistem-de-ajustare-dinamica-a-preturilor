@@ -1,61 +1,51 @@
-"use client";
+'use client';
 
+import { useEffect, useState } from 'react';
 import Menu from './components/Menu';
-import Carusel from './components/carusel';
 import Card from './components/card';
-import Divider from './components/divider';
-import Link from 'next/link';
-import Button from './components/button';
-import product from './product';
-import Image from "next/image";
+import Parteneri from './components/parteneri';
+import Four_card from './components/four_card';
+import Footer from './components/footer';
+
+type Product = {
+  id: number;
+  brand: string;
+  name: string;
+  color: string;
+  pret: string;
+  src: string;
+  src2: string;
+  src3: string;
+  src4: string;
+};
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error('Eroare la preluarea produselor:', error));
+  }, []);
+
   return (
     <main className="theme-light">
-      <div className='sticky top-0 z-50'><Menu /></div>
-      <div className="flex justify-center items-center">
-        <div className="w-full">
-          <div className="flex">
-            <div className="w-1/3 bg-base-100 flex items-center pl-4">
-              <p className="text-white text-3xl">Colaborăm cu branduri de top precum:</p>
-            </div>
-            <div className='w-2/3 bg-white flex'>
-              <div className="w-1/4 mx-1">
-                <img src="/images/pngwing.com (7).png" className='object-cover h-32' />
-              </div>
-              <div className="w-1/4 mx-1">
-                <img src="/images/pngwing.com (5).png" className='object-cover h-32' />
-              </div>
-              <div className="w-1/4 mx-1">
-                <img src="/images/pngwing.com (3).png" className='object-cover h-32' />
-              </div>
-              <div className="w-1/4 mx-1">
-                <img src="/images/pngwing.com (4).png" className='object-cover h-32' />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="sticky top-0 z-50">
+        <Menu />
       </div>
-      <div>
-        <div className="flex justify-center items-center space-x-10 mt-5">
-          {product.map(({ id, name, src, pret, descriere }) => (
-            <Card key={id} poza={src} nume={name} pret={pret} descriere={descriere} id={id} />
-          ))}
-        </div>
-        <Divider />
-        <div className="flex justify-center items-center space-x-10 mt-5">
-          {product.map(({ id, name, src, pret, descriere }) => (
-            <Card key={id} poza={src} nume={name} pret={pret} descriere={descriere} id={id} />
-          ))}
-        </div>
-        <Divider />
-        <div className="flex justify-center items-center space-x-10 mt-5">
-          {product.map(({ id, name, src, pret, descriere }) => (
-            <Card key={id} poza={src} nume={name} pret={pret} descriere={descriere} id={id} />
-          ))}
-        </div>
-        <Divider />
+
+      <Four_card />
+
+      <Parteneri />
+
+      {/* PRODUSE */}
+      <div className="flex flex-wrap justify-center gap-10 mt-10 px-4">
+        {products.map(({ id, brand, name, src, pret }) => (
+          <Card key={id} brand={brand} poza={src} nume={name} pret={pret} id={id.toString()} />
+        ))}
       </div>
+      <div className="mt-10"><Footer /> </div>
     </main>
   );
 }
