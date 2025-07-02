@@ -1,34 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sistem de Ajustare Dinamică a Prețurilor – Proiect de Licență
 
-## Getting Started
+Acest proiect reprezintă o platformă de e-commerce dedicată vânzării de sneakers, care integrează un mecanism inteligent de ajustare dinamică a prețurilor, bazat pe analiza vânzărilor și prognoze realizate cu algoritmul Prophet.
 
-First, run the development server:
+## 🔧 Tehnologii utilizate
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+- **Front-end**: Next.js (bazat pe React), Tailwind CSS, DaisyUI, Chart.js
+- **Back-end**: FastAPI (Python), PyODBC
+- **Bază de date**: Microsoft SQL Server
+- **AI / Predictie**: Prophet (Facebook)
+- **Altele**: JSON, JWT, NextAuth, Server-side rendering (SSR)
+
+## 📁 Structura proiectului
+
+```
+next-app/
+├── app/              # Front-end (Next.js)
+├── AI/, lib/         # Scripturi Python pentru analiza AI și conexiuni
+├── public/, pages/   # Conținut static și pagini front-end
+├── app.py            # Server FastAPI
+├── package.json      # Configurare Next.js
+├── requirements.txt  # Biblioteci pentru FastAPI
+├── .env              # Config variabile mediu (exclus din Git)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚙️ Cum rulezi proiectul local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Baza de date – SQL Server
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Creează baza de date `Market_sql` în SQL Server
+- Creează tabelele: `Brands`, `Sneakers`, `Sneakers_Type`, `Size`, `Sales`, `Users`
+- Populează-le cu date de test sau folosește scripturile proprii
+- Asigură-te că instanța SQL este accesibilă local
 
-## Learn More
+> Exemplu conexiune (folosită în `app.py`):
+```python
+conn = pyodbc.connect(
+    r"Driver={SQL Server};"
+    r"Server=DESKTOP-O2785UR\SQLEXPRESS;"
+    r"Database=Market_sql;"
+    r"Trusted_Connection=yes;"
+)
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Rulează backend-ul (FastAPI)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### 3. Rulează front-end-ul (Next.js)
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📈 Funcționalități principale
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Pagini cu produse și mărimi disponibile
+- Coș de cumpărături și plasare comandă
+- Autentificare și gestionare conturi (NextAuth + JWT)
+- Panou admin cu:
+  - Vânzări pe mărime și pe zile (grafic Chart.js)
+  - Recomandări de reduceri generate de Prophet
+  - Actualizare automată a prețurilor prin back-end
+
+## 🤖 Algoritmul de ajustare a prețului
+
+- Prophet antrenează modele pe baza vânzărilor zilnice (`Sales`)
+- Se estimează în câte zile se va epuiza stocul pentru fiecare mărime
+- Dacă estimarea este prea mare (>400 sau >800 zile), se propune o reducere:
+  - -10% sau -20%, în funcție de viteză vânzare
+- Reducerile pot fi aplicate direct din interfață
+
+## 📌 Direcții viitoare
+
+- Integrare cu sisteme de plată online (Stripe, PayPal)
+- Publicare aplicație pe server real sau platformă cloud (ex: Vercel, Azure)
+- Extinderea mecanismului AI pentru recomandări de produse
+- Adăugarea unui modul de stocuri inteligente
+
+## 👨‍🎓 Autor
+
+**Belu Liviu**  
+Universitatea Transilvania din Brașov – Facultatea de Inginerie Electrică și Știința Calculatoarelor  
+Coordonator: Conf. dr. ing. Cațaron Angel Doru
